@@ -1,0 +1,11 @@
+node_modules/
+dist/
+coverage
+
+# CDK asset staging directory
+.cdk.staging
+cdk.out
+
+# CDK outputs
+*.cdkoutputs.json
+.eslintcache
