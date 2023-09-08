@@ -78,8 +78,8 @@ jobs:
       - name: Configure AWS credentials (Sandbox)
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT_NUMBER }}:role/infrastructure/service-deployment-partner-marketplace
-          role-session-name: service-deployment-partner-marketplace
+          role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT_NUMBER }}:role/hammam
+          role-session-name: hammam
           aws-region: eu-west-1
 
       - name: deploy environment
