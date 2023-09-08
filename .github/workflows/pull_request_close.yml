@@ -1,17 +1,15 @@
-name: Deploy Playground
+name: Destroy Playground
 
 on:
   pull_request:
     types:
-      - opened
-      - synchronize
-      - reopened
+      - closed
 
 env:
   AWS_DEFAULT_REGION: 'eu-west-1'
   AWS_REGION: 'eu-west-1'
-  AWS_ACCOUNT_NUMBER: '905353286448'
   ENVIRONMENT: 'playground'
+  AWS_ACCOUNT_NUMBER: '905353286448'
 
 permissions:
   actions: write
@@ -46,13 +44,13 @@ jobs:
       playground-id: pg${{ steps.set-playground-id.outputs.playground_id }}
       branch-name: ${{ steps.set-extract-branch.outputs.branch }}
 
-  deploy-playground-project:
-    name: 'Deploy Playground Project'
+  destroy-playground-project:
+    name: 'Destroy Playground Project'
     runs-on: ubuntu-latest
     needs:
       - setup
     steps:
-      - name: 'Checking out from GitHub'
+      - name: Checking Source
         uses: 'actions/checkout@v2'
 
       - name: Restore node_modules
@@ -65,7 +63,7 @@ jobs:
       - name: Configure node and npm
         uses: actions/setup-node@v2-beta
         with:
-          node-version: 20
+          node-version: 18
           registry-url: https://npm.pkg.github.com/
           scope: 'Hammamsgit'
 
@@ -82,15 +80,14 @@ jobs:
           role-session-name: service-deployment-partner-marketplace
           aws-region: eu-west-1
 
-      - name: deploy environment
+      - name: destroy environment
         run: |
-          npx ts-node bin/manage-playground-env.ts --action deploy --id ${{ needs.setup.outputs.playground-id }} --branch-name ${{ needs.setup.outputs.branch-name }}
+          npx ts-node bin/manage-playground-env.ts --action destroy --id ${{ needs.setup.outputs.playground-id }} --branch-name ${{ needs.setup.outputs.branch-name }}
 
       - name: comment on pr
         uses: unsplash/comment-on-pr@master
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          msg: 🟢 Playground environment `${{ needs.setup.outputs.playground-id }}` DEPLOYED
-          check_for_duplicate_msg: true
-          duplicate_msg_pattern: Playground environment `${{ needs.setup.outputs.playground-id }}` DEPLOYED
+          msg: 🔴 Playground environment `${{ needs.setup.outputs.pr-id }}` DESTROYED
+          check_for_duplicate_msg: false

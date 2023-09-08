@@ -1,5 +1,5 @@
 {
-  "name": "aws-learning-playground",
+  "name": "aws-typescript-playground",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -12,7 +12,7 @@
     "type": "git",
     "url": "git+https://github.com/Hammamsgit/aws-playground-ts.git"
   },
-  "author": "",
+  "author": "Hammam",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/Hammamsgit/aws-playground-ts/issues"
