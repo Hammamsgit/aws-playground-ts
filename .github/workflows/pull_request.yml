@@ -1,6 +1,17 @@
 name: Deploy Playground
 
 on:
+  workflow_dispatch:
+    inputs:
+      AWS_ACCESS_KEY_ID:
+        description: "Access Key ID with Permissions to deploy IAM, and OIDC"
+        required: true
+      AWS_SECRET_ACCESS_KEY:
+        description: "Secret Access Key with Permissions to deploy IAM, and OIDC"
+        required: true
+      AWS_REGION:
+        description: "Region to deploy to."
+        required: true
   pull_request:
     types:
       - opened
@@ -75,12 +86,12 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GHP_TOKEN }}
 
-      - name: Configure AWS credentials (Sandbox)
+      - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT_NUMBER }}:role/hammam
-          role-session-name: hammam
-          aws-region: eu-west-1
+          aws-access-key-id: $
+          aws-secret-access-key: $
+          aws-region: $
 
       - name: deploy environment
         run: |
