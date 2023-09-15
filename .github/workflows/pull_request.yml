@@ -1,17 +1,6 @@
 name: Deploy Playground
 
 on:
-  workflow_dispatch:
-    inputs:
-      AWS_ACCESS_KEY_ID:
-        description: "Access Key ID with Permissions to deploy IAM, and OIDC"
-        required: true
-      AWS_SECRET_ACCESS_KEY:
-        description: "Secret Access Key with Permissions to deploy IAM, and OIDC"
-        required: true
-      AWS_REGION:
-        description: "Region to deploy to."
-        required: true
   pull_request:
     types:
       - opened
@@ -89,9 +78,9 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          aws-access-key-id: $
-          aws-secret-access-key: $
-          aws-region: $
+          role-to-assume: arn:aws:iam::905353286448:role/github-ci-role
+          role-session-name: github-ci-role
+          aws-region: eu-west-1
 
       - name: deploy environment
         run: |
