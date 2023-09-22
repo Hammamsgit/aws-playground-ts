@@ -63,7 +63,7 @@ jobs:
       - name: Configure node and npm
         uses: actions/setup-node@v2-beta
         with:
-          node-version: 20
+          node-version: 18
           registry-url: https://npm.pkg.github.com/
           scope: 'Hammamsgit'
 
