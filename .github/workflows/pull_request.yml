@@ -83,7 +83,7 @@ jobs:
           aws-region: eu-west-1
           
       - name: Bootstrap AWS CDK environment
-        run:  npx cdk bootstrap --context --branch-name ${{ needs.setup.outputs.branch-name }}
+        run:  npx cdk bootstrap --branch-name ${{ needs.setup.outputs.branch-name }}
         env:
           AWS_DEFAULT_REGION: 'eu-west-1'
 
