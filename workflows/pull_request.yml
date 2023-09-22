@@ -82,6 +82,13 @@ jobs:
           role-session-name: service-deployment-partner-marketplace
           aws-region: eu-west-1
 
+      - name: Bootstrap AWS CDK environment
+        run: npx cdk bootstrap
+        env:
+          AWS_DEFAULT_REGION: 'eu-west-1'
+          BRANCH_NAME: ${{ needs.setup.outputs.branch-name }}
+          PLAYGROUND_IDENTITY: ${{ needs.setup.outputs.playground-id }}
+
       - name: deploy environment
         run: |
           npx ts-node bin/manage-playground-env.ts --action deploy --id ${{ needs.setup.outputs.playground-id }} --branch-name ${{ needs.setup.outputs.branch-name }}
