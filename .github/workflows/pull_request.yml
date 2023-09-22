@@ -81,6 +81,11 @@ jobs:
           role-to-assume: arn:aws:iam::905353286448:role/github-ci-role
           role-session-name: github-ci-role
           aws-region: eu-west-1
+          
+      - name: Bootstrap AWS CDK environment
+        run: npx cdk bootstrap
+        env:
+          AWS_DEFAULT_REGION: 'eu-west-1'
 
       - name: deploy environment
         run: |
