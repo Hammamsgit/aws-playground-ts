@@ -65,7 +65,7 @@ jobs:
       - name: Configure node and npm
         uses: actions/setup-node@v2-beta
         with:
-          node-version: 20
+          node-version: 18
           registry-url: https://npm.pkg.github.com/
           scope: 'Hammamsgit'
 
@@ -75,11 +75,11 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GHP_TOKEN }}
 
-      - name: Configure AWS credentials (Sandbox)
+      - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT_NUMBER }}:role/infrastructure/service-deployment-partner-marketplace
-          role-session-name: service-deployment-partner-marketplace
+          role-to-assume: arn:aws:iam::905353286448:role/github-ci-role
+          role-session-name: github-ci-role
           aws-region: eu-west-1
 
       - name: Bootstrap AWS CDK environment
