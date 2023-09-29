@@ -1,24 +1,19 @@
-import { NodejsFunction } from "aws-cdk-lib/aws-lambda-nodejs";
-import { Construct } from "constructs";
-import path from "path";
-import { PlaygroundStackProps } from "bootstrap/types";
-import {
-  BlockPublicAccess,
-  Bucket,
-  EventType,
-  StorageClass,
-} from "aws-cdk-lib/aws-s3";
-import { LambdaDestination } from "aws-cdk-lib/aws-s3-notifications";
-import { Runtime } from "aws-cdk-lib/aws-lambda";
-import { Queue } from "aws-cdk-lib/aws-sqs";
-import { SqsEventSource } from "aws-cdk-lib/aws-lambda-event-sources";
-import { Duration, RemovalPolicy, Stack } from "aws-cdk-lib";
+import { NodejsFunction } from "aws-cdk-lib/aws-lambda-nodejs"
+import { Construct } from "constructs"
+import path from "path"
+import { PlaygroundStackProps } from "bootstrap/types"
+import { BlockPublicAccess, Bucket, EventType, StorageClass } from "aws-cdk-lib/aws-s3"
+import { LambdaDestination } from "aws-cdk-lib/aws-s3-notifications"
+import { Runtime } from "aws-cdk-lib/aws-lambda"
+import { Queue } from "aws-cdk-lib/aws-sqs"
+import { SqsEventSource } from "aws-cdk-lib/aws-lambda-event-sources"
+import { Duration, RemovalPolicy, Stack } from "aws-cdk-lib"
 
 export class PlaygroundStack extends Stack {
   constructor(scope: Construct, id: string, props: PlaygroundStackProps) {
-    super(scope, id, props);
+    super(scope, id, props)
 
-    const { buildName } = props;
+    const { buildName } = props
 
     const imageUploadBucket = new Bucket(this, "ImageUploadBucket", {
       bucketName: buildName("image-upload-bucket"),
@@ -31,18 +26,18 @@ export class PlaygroundStack extends Stack {
           transitions: [
             {
               storageClass: StorageClass.GLACIER,
-              transitionAfter: Duration.days(30),
+              transitionAfter: Duration.days(20),
             },
           ],
         },
       ],
-    });
+    })
 
     const processingDLQ = new Queue(this, "mot-processing-dlq", {
       queueName: `${buildName("processing-dlq")}.fifo`,
       fifo: true,
       contentBasedDeduplication: true,
-    });
+    })
 
     const processingQueue = new Queue(this, "mot-processing-queue", {
       queueName: `${buildName("processing")}.fifo`,
@@ -52,20 +47,16 @@ export class PlaygroundStack extends Stack {
         queue: processingDLQ,
         maxReceiveCount: 3,
       },
-    });
+    })
 
-    const getImageFromBucketLambda = new NodejsFunction(
-      this,
-      "getImageFromBucket",
-      {
-        functionName: buildName("get-image-from-bucket"),
-        runtime: Runtime.NODEJS_18_X,
-        entry: path.join(__dirname, "../src/get-image.ts"),
-        environment: {
-          BUCKET_NAME: imageUploadBucket.bucketName,
-        },
-      }
-    );
+    const getImageFromBucketLambda = new NodejsFunction(this, "getImageFromBucket", {
+      functionName: buildName("get-image-from-bucket"),
+      runtime: Runtime.NODEJS_18_X,
+      entry: path.join(__dirname, "../src/get-image.ts"),
+      environment: {
+        BUCKET_NAME: imageUploadBucket.bucketName,
+      },
+    })
 
     const processImageLambda = new NodejsFunction(this, "processImage", {
       functionName: buildName("process-image"),
@@ -74,28 +65,19 @@ export class PlaygroundStack extends Stack {
       environment: {
         QUEUE_URL: processingQueue.queueUrl,
       },
-    });
+    })
 
-    imageUploadBucket.grantRead(getImageFromBucketLambda);
-    imageUploadBucket.addEventNotification(
-      EventType.OBJECT_CREATED,
-      new LambdaDestination(getImageFromBucketLambda),
-      { suffix: ".jpg" }
-    );
-    getImageFromBucketLambda.addEventSourceMapping(
-      "GetImageFromBucketEventSourceMapping",
-      {
-        eventSourceArn: imageUploadBucket.bucketArn,
-        batchSize: 1,
-        retryAttempts: 3,
-      }
-    );
+    imageUploadBucket.grantRead(getImageFromBucketLambda)
+    imageUploadBucket.addEventNotification(EventType.OBJECT_CREATED, new LambdaDestination(getImageFromBucketLambda), { suffix: ".jpg" })
+    getImageFromBucketLambda.addEventSourceMapping("GetImageFromBucketEventSourceMapping", {
+      eventSourceArn: imageUploadBucket.bucketArn,
+      batchSize: 1,
+      retryAttempts: 3,
+    })
 
-    processingQueue.grantSendMessages(processImageLambda);
-    processingQueue.grantConsumeMessages(processImageLambda);
+    processingQueue.grantSendMessages(processImageLambda)
+    processingQueue.grantConsumeMessages(processImageLambda)
 
-    processImageLambda.addEventSource(
-      new SqsEventSource(processingQueue, { batchSize: 1 })
-    );
+    processImageLambda.addEventSource(new SqsEventSource(processingQueue, { batchSize: 1 }))
   }
 }
