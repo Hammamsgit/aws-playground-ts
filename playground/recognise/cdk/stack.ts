@@ -27,7 +27,7 @@ export class PlaygroundStack extends Stack {
       autoDeleteObjects: true,
       lifecycleRules: [
         {
-          expiration: Duration.days(1),
+          expiration: Duration.days(30),
           transitions: [
             {
               storageClass: StorageClass.GLACIER,
