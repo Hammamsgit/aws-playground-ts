@@ -3,3 +3,4 @@
 
 npm run check-branch-name
 npx lint-staged
+npm run prettier:fix

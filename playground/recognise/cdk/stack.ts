@@ -6,7 +6,7 @@ import { BlockPublicAccess, Bucket, EventType, StorageClass } from "aws-cdk-lib/
 import { LambdaDestination } from "aws-cdk-lib/aws-s3-notifications"
 import { Runtime } from "aws-cdk-lib/aws-lambda"
 import { Queue } from "aws-cdk-lib/aws-sqs"
-import { SqsEventSource } from "aws-cdk-lib/aws-lambda-event-sources"
+import { S3EventSource, SqsEventSource } from "aws-cdk-lib/aws-lambda-event-sources"
 import { Duration, RemovalPolicy, Stack } from "aws-cdk-lib"
 
 export class PlaygroundStack extends Stack {
@@ -69,11 +69,7 @@ export class PlaygroundStack extends Stack {
 
     imageUploadBucket.grantRead(getImageFromBucketLambda)
     imageUploadBucket.addEventNotification(EventType.OBJECT_CREATED, new LambdaDestination(getImageFromBucketLambda), { suffix: ".jpg" })
-    getImageFromBucketLambda.addEventSourceMapping("GetImageFromBucketEventSourceMapping", {
-      eventSourceArn: imageUploadBucket.bucketArn,
-      batchSize: 1,
-      retryAttempts: 3,
-    })
+    getImageFromBucketLambda.addEventSource(new S3EventSource(imageUploadBucket, { events: [EventType.OBJECT_CREATED] }))
 
     processingQueue.grantSendMessages(processImageLambda)
     processingQueue.grantConsumeMessages(processImageLambda)
