@@ -69,7 +69,7 @@ export class PlaygroundStack extends Stack {
 
     imageUploadBucket.grantRead(getImageFromBucketLambda)
     imageUploadBucket.addEventNotification(EventType.OBJECT_CREATED, new LambdaDestination(getImageFromBucketLambda), { suffix: ".jpg" })
-    getImageFromBucketLambda.addEventSource(new S3EventSource(imageUploadBucket, { events: [EventType.OBJECT_CREATED] }))
+    getImageFromBucketLambda.addEventSource(new S3EventSource(imageUploadBucket, { events: [EventType.OBJECT_CREATED], filters: [{ suffix: ".jpg" }] }))
 
     processingQueue.grantSendMessages(processImageLambda)
     processingQueue.grantConsumeMessages(processImageLambda)
