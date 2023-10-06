@@ -2,8 +2,8 @@ import { GetObjectCommand, S3Client } from "@aws-sdk/client-s3"
 import { SQSClient, SendMessageCommand } from "@aws-sdk/client-sqs"
 import { S3Event } from "aws-lambda"
 
-const s3Client = new S3Client({ region: "us-west-1" })
-const sqsClient = new SQSClient({ region: "us-west-1" })
+const s3Client = new S3Client({ region: "eu-west-1" })
+const sqsClient = new SQSClient({ region: "eu-west-1" })
 
 export const handler = async (event: S3Event) => {
   console.log(event.Records[0].s3.object.key)
