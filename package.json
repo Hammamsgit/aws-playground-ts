@@ -23,6 +23,7 @@
     "npm": "9.6.2"
   },
   "devDependencies": {
+    "@aws-sdk/client-rekognition": "^3.425.0",
     "@types/argparse": "^2.0.10",
     "@types/aws-lambda": "^8.10.93",
     "@types/fs-extra": "^9.0.13",

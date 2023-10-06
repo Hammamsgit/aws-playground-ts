@@ -3,7 +3,6 @@ import { NodejsFunction } from "aws-cdk-lib/aws-lambda-nodejs"
 import { Construct } from "constructs"
 import path from "path"
 import { PlaygroundStackProps } from "bootstrap/types"
-import { Effect, OpenIdConnectPrincipal, OpenIdConnectProvider, PolicyDocument, PolicyStatement, Role } from "aws-cdk-lib/aws-iam"
 
 export class PlaygroundStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props: PlaygroundStackProps) {

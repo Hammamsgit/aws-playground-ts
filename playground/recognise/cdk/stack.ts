@@ -55,6 +55,7 @@ export class PlaygroundStack extends Stack {
       entry: path.join(__dirname, "../src/get-image.ts"),
       environment: {
         BUCKET_NAME: imageUploadBucket.bucketName,
+        PROCESSING_QUEUE_URL: processingQueue.queueUrl,
       },
     })
 
@@ -64,11 +65,11 @@ export class PlaygroundStack extends Stack {
       entry: path.join(__dirname, "../src/process-image.ts"),
       environment: {
         QUEUE_URL: processingQueue.queueUrl,
+        IMAGE_UPLOAD_BUCKET_NAME: imageUploadBucket.bucketName,
       },
     })
 
     imageUploadBucket.grantRead(getImageFromBucketLambda)
-    // imageUploadBucket.addEventNotification(EventType.OBJECT_CREATED, new LambdaDestination(getImageFromBucketLambda), { suffix: ".jpg" })
     getImageFromBucketLambda.addEventSource(new S3EventSource(imageUploadBucket, { events: [EventType.OBJECT_CREATED], filters: [{ suffix: ".jpg" }] }))
 
     processingQueue.grantSendMessages(processImageLambda)
