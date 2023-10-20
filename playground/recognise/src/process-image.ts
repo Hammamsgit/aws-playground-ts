@@ -1,5 +1,4 @@
 import { IndexFacesCommand, RekognitionClient } from "@aws-sdk/client-rekognition"
-import { ProxyResource } from "aws-cdk-lib/aws-apigateway"
 import { SQSEvent } from "aws-lambda"
 
 const rekognitionClient = new RekognitionClient({ region: "us-east-1" })

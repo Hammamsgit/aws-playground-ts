@@ -19,7 +19,6 @@ export const handler = async (event: S3Event) => {
   const processingItem = {
     key: event.Records[0].s3.object.key,
     bucketName: event.Records[0].s3.bucket.name,
-    body: s3Record.Body,
   }
 
   const command = new SendMessageCommand({
