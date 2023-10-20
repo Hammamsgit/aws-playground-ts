@@ -24,6 +24,7 @@ export const handler = async (event: S3Event) => {
   const command = new SendMessageCommand({
     QueueUrl: process.env.PROCESSING_QUEUE_URL,
     MessageBody: JSON.stringify(processingItem),
+    MessageGroupId: event.Records[0].s3.object.versionId,
   })
 
   const result = await sqsClient.send(command)
