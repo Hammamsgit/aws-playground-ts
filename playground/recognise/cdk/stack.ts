@@ -71,7 +71,7 @@ export class PlaygroundStack extends Stack {
     })
 
     new PolicyStatement({
-      actions: ["rekognition:*"],
+      actions: ["rekognition:IndexFaces"],
       resources: [processImageLambda.functionArn],
       effect: Effect.ALLOW,
     })
