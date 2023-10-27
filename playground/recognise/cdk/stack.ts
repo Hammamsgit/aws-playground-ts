@@ -70,11 +70,13 @@ export class PlaygroundStack extends Stack {
       },
     })
 
-    new PolicyStatement({
-      actions: ["rekognition:IndexFaces"],
-      resources: [processImageLambda.functionArn],
-      effect: Effect.ALLOW,
-    })
+    processImageLambda.addToRolePolicy(
+      new PolicyStatement({
+        actions: ["rekognition:*"],
+        resources: ["*"],
+        effect: Effect.ALLOW,
+      })
+    )
 
     imageUploadBucket.grantRead(getImageFromBucketLambda)
     imageUploadBucket.grantRead(processImageLambda)
