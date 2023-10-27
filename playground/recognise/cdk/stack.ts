@@ -8,6 +8,7 @@ import { Runtime } from "aws-cdk-lib/aws-lambda"
 import { Queue } from "aws-cdk-lib/aws-sqs"
 import { S3EventSource, SqsEventSource } from "aws-cdk-lib/aws-lambda-event-sources"
 import { Duration, RemovalPolicy, Stack } from "aws-cdk-lib"
+import { Effect, PolicyStatement } from "aws-cdk-lib/aws-iam"
 
 export class PlaygroundStack extends Stack {
   constructor(scope: Construct, id: string, props: PlaygroundStackProps) {
@@ -67,6 +68,12 @@ export class PlaygroundStack extends Stack {
         QUEUE_URL: processingQueue.queueUrl,
         IMAGE_UPLOAD_BUCKET_NAME: imageUploadBucket.bucketName,
       },
+    })
+
+    new PolicyStatement({
+      actions: ["rekognition:*"],
+      resources: [processImageLambda.functionArn],
+      effect: Effect.ALLOW,
     })
 
     imageUploadBucket.grantRead(getImageFromBucketLambda)
